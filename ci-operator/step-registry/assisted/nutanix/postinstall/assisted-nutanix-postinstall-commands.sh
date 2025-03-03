@@ -51,6 +51,19 @@ stringData:
 EOF
 echo "machine API credentials created"
 
+cat <<EOF | oc create -f -
+apiVersion: v1
+kind: Secret
+metadata:
+   name: nutanix-credentials
+   namespace: openshift-cloud-controller-manager
+type: Opaque
+stringData:
+  credentials: |
+    [{"type":"basic_auth","data":{"prismCentral":{"username":"${NUTANIX_USERNAME}","password":"${NUTANIX_PASSWORD}"},"prismElements":null}}]
+EOF
+echo "Cluster Cloud Controller Manager operator credentials created"
+
 version=$(oc get clusterversion version -o jsonpath='{.status.desired.version}')
 resource_timeout_seconds=300
 
