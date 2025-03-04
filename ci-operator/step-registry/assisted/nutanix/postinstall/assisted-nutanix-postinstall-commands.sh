@@ -67,6 +67,7 @@ echo "Cluster Cloud Controller Manager operator credentials created"
 version=$(oc get clusterversion version -o jsonpath='{.status.desired.version}')
 resource_timeout_seconds=300
 
+echo "${version}"
 # Do the following if OCP version is >=4.13
 # Cloud Provider Config is needed for CCM, which was introduced with 4.13 for Nutanix
 if [[ $(echo -e "4.13
@@ -206,7 +207,7 @@ cat <<EOF | oc create -f -
 apiVersion: v1
 kind: Secret
 metadata:
-  name: ntnx-secret
+  name: ntnx-pc-secret
   namespace: openshift-cluster-csi-drivers
 stringData:
   # prism-element-ip:prism-port:admin:password
@@ -226,12 +227,12 @@ provisioner: csi.nutanix.com
 parameters:
   csi.storage.k8s.io/fstype: ext4
   csi.storage.k8s.io/provisioner-secret-namespace: openshift-cluster-csi-drivers
-  csi.storage.k8s.io/provisioner-secret-name: ntnx-secret
+  csi.storage.k8s.io/provisioner-secret-name: ntnx-pc-secret
   storageContainer: ${NUTANIX_STORAGE_CONTAINER}
-  csi.storage.k8s.io/controller-expand-secret-name: ntnx-secret
+  csi.storage.k8s.io/controller-expand-secret-name: ntnx-pc-secret
   csi.storage.k8s.io/node-publish-secret-namespace: openshift-cluster-csi-drivers
   storageType: NutanixVolumes
-  csi.storage.k8s.io/node-publish-secret-name: ntnx-secret
+  csi.storage.k8s.io/node-publish-secret-name: ntnx-pc-secret
   csi.storage.k8s.io/controller-expand-secret-namespace: openshift-cluster-csi-drivers
 reclaimPolicy: Delete
 allowVolumeExpansion: true
